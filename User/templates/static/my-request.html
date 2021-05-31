@@ -1,0 +1,242 @@
+{% extends 'html/userBase.html' %}
+{% load static %}
+{% block content %}
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">My Requests</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
+                <li class="active"><span>My Requests</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
+
+    <!-- Row -->
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="panel panel-danger contact-card card-view">
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <div class="pull-left user-img-wrap mr-15">
+                            <img class="card-user-img img-circle pull-left" src="dist/img/user.png" alt="user"/>
+                        </div>
+                        <div class="pull-left user-detail-wrap">
+											<span class="block card-user-name">
+												Cleaning Request
+											</span>
+                            <span class="block card-user-desn">
+												Id 1234
+											</span>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-edit txt-light"></i>
+                        </a>
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-delete txt-light"></i>
+                        </a>
+                        <div class="pull-left inline-block dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"
+                               role="button"><i class="zmdi zmdi-more-vert txt-light"></i></a>
+                            <ul class="dropdown-menu bullet dropdown-menu-right" role="menu">
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-reply" aria-hidden="true"></i>Full Info</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-share" aria-hidden="true"></i>Send Message</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-trash" aria-hidden="true"></i>Follow</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body row">
+                        <div class="user-others-details pl-15 pr-15">
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-delete inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">container Id:</span>
+                                <span class="txt-dark">12345</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-map inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Location:</span>
+                                <span class="txt-dark">asd</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-alert-circle inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Status: </span>
+                                <span class="txt-dark">Regected</span>
+                            </div>
+
+                        </div>
+                        <hr class="light-grey-hr mt-20 mb-20"/>
+                        <div class="emp-detail pl-15 pr-15">
+                            <div class="mb-5">
+                                <span class="inline-block capitalize-font mr-5">date:</span>
+                                <span class="txt-dark">12-10-2020</span>
+                            </div>
+                            <div>
+                                <span class="inline-block capitalize-font mr-5">Time:</span>
+                                <span class="txt-dark">10:30</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="panel panel-success contact-card card-view">
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <div class="pull-left user-img-wrap mr-15">
+                            <img class="card-user-img img-circle pull-left" src="dist/img/user1.png" alt="user"/>
+                        </div>
+                        <div class="pull-left user-detail-wrap">
+											<span class="block card-user-name">
+												Recycling Request
+											</span>
+                            <span class="block card-user-desn">
+												Id 1233
+											</span>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-edit txt-light"></i>
+                        </a>
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-delete txt-light"></i>
+                        </a>
+                        <div class="pull-left inline-block dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"
+                               role="button"><i class="zmdi zmdi-more-vert txt-light"></i></a>
+                            <ul class="dropdown-menu bullet dropdown-menu-right" role="menu">
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-reply" aria-hidden="true"></i>Full Info</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-share" aria-hidden="true"></i>Send Message</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-trash" aria-hidden="true"></i>Follow</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body row">
+                        <div class="user-others-details pl-15 pr-15">
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-delete inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">container Id:</span>
+                                <span class="txt-dark">12345</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-map inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Location:</span>
+                                <span class="txt-dark">asd</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-alert-circle inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Status: </span>
+                                <span class="txt-dark">Accepted</span>
+                            </div>
+                        </div>
+                        <hr class="light-grey-hr mt-20 mb-20"/>
+                        <div class="emp-detail pl-15 pr-15">
+                            <div class="mb-5">
+                                <span class="inline-block capitalize-font mr-5">date:</span>
+                                <span class="txt-dark">12-10-2020</span>
+                            </div>
+                            <div>
+                                <span class="inline-block capitalize-font mr-5">Time:</span>
+                                <span class="txt-dark">10:30</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+            <div class="panel panel-warning contact-card card-view">
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <div class="pull-left user-img-wrap mr-15">
+                            <img class="card-user-img img-circle pull-left" src="dist/img/user4.png" alt="user"/>
+                        </div>
+                        <div class="pull-left user-detail-wrap">
+											<span class="block card-user-name">
+												Cleaning Request
+											</span>
+                            <span class="block card-user-desn">
+												Id 1235
+											</span>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-edit txt-light"></i>
+                        </a>
+                        <a class="pull-left inline-block mr-15" href="#">
+                            <i class="zmdi zmdi-delete txt-light"></i>
+                        </a>
+                        <div class="pull-left inline-block dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"
+                               role="button"><i class="zmdi zmdi-more-vert txt-light"></i></a>
+                            <ul class="dropdown-menu bullet dropdown-menu-right" role="menu">
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-reply" aria-hidden="true"></i>Full Info</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-share" aria-hidden="true"></i>Send Message</a></li>
+                                <li role="presentation"><a href="javascript:void(0)" role="menuitem"><i
+                                        class="icon wb-trash" aria-hidden="true"></i>Follow</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body row">
+                        <div class="user-others-details pl-15 pr-15">
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-delete inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">container Id:</span>
+                                <span class="txt-dark">12345</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-map inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Location:</span>
+                                <span class="txt-dark">asd</span>
+                            </div>
+                            <div class="mb-15">
+                                <i class="zmdi zmdi-alert-circle inline-block mr-10"></i>
+                                <span class="inline-block txt-dark">Status: </span>
+                                <span class="txt-dark">Pinding</span>
+                            </div>
+                        </div>
+                        <hr class="light-grey-hr mt-20 mb-20"/>
+                        <div class="emp-detail pl-15 pr-15">
+                            <div class="mb-5">
+                                <span class="inline-block capitalize-font mr-5">date:</span>
+                                <span class="txt-dark">12-10-2020</span>
+                            </div>
+                            <div>
+                                <span class="inline-block capitalize-font mr-5">Time:</span>
+                                <span class="txt-dark">10:30</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Row -->
+{% endblock content %}

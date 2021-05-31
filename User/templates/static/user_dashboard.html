@@ -1,0 +1,78 @@
+{% extends 'html/userBase.html' %}
+{% block content %}
+    <!-- Preloader -->
+    <div class="preloader-it">
+        <div class="la-anim-1"></div>
+    </div>
+    <!-- /Preloader -->
+    <!-- Title -->
+        <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="txt-dark">History</h4>
+        </div>
+        </div>
+
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" style="text-align: center" role="alert">
+                <h6> {{ message }}</h6>
+            </div>
+        {% endfor %}
+
+    <!-- /Title -->
+    <!-- Row -->
+    <div class="row">
+        {% for i in data %}
+
+            <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
+
+                <div  {% if i.rStatus == "Collected" %} class="panel panel-success contact-card card-view" {% else %}
+                                                        class="panel panel-warning contact-card card-view" {% endif %} >
+                    <div class="panel-heading">
+                        <div class="pull-left">
+                            <div class="pull-left user-detail-wrap">
+											<span class="block card-user-name">
+												Collection Request
+											</span>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-wrapper collapse in">
+                        <div class="panel-body row">
+                            <div class="user-others-details pl-15 pr-15">
+                                <div class="mb-15">
+                                    <i class="zmdi zmdi-delete inline-block mr-10"></i>
+                                    <span class="inline-block txt-dark">container Id:</span>
+                                    <span class="txt-dark">{{ i.cont_id }}</span>
+                                </div>
+                                <div class="mb-15">
+                                    <i class="zmdi zmdi-map inline-block mr-10"></i>
+                                    <span class="inline-block txt-dark">PostCode:</span>
+                                    <span class="txt-dark">{{ i.post_code }}</span>
+                                </div>
+                                <div class="mb-15">
+                                    <i class="zmdi zmdi-alert-circle inline-block mr-10"></i>
+                                    <span class="inline-block txt-dark">Status: </span>
+                                    <span class="txt-dark">{{ i.rStatus }}</span>
+                                </div>
+
+                            </div>
+                            <hr class="light-grey-hr mt-20 mb-20"/>
+                            <div class="emp-detail pl-15 pr-15">
+                                <div class="mb-5">
+                                    <span class="inline-block capitalize-font mr-5">date:</span>
+                                    <span class="txt-dark">{{ i.date }}</span>
+                                </div>
+                                <div>
+                                    <span class="inline-block capitalize-font mr-5">Time:</span>
+                                    <span class="txt-dark">{{ i.time }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

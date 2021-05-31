@@ -1,0 +1,262 @@
+{% extends 'html/command_center_base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- Row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default card-view  pa-0">
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body pa-0">
+                        <div class="mail-box">
+                            <div class="row">
+                                <aside class="col-lg-3 col-md-4 pr-0">
+
+                                    <h5 class="pl-15 mb-20">Requests</h5>
+                                    <ul class="chat-list-wrap">
+                                        <li class="chat-list">
+                                            <div class="chat-body">
+                                                <a href="javascript:void(0)">
+                                                    <div class="chat-data">
+                                                        <img class="user-img img-circle" src="{% static 'dist/img/user.png'%}"
+                                                             alt="user"/>
+                                                        <div class="user-data">
+                                                            <span class="name block capitalize-font">Cleaning Request</span>
+                                                            <span class="time block truncate txt-grey">text.</span>
+                                                        </div>
+                                                        <div class="status away"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </a>
+                                                <a href="javascript:void(0)">
+                                                    <div class="chat-data">
+                                                        <img class="user-img img-circle" src="{% static 'dist/img/user1.png'%}"
+                                                             alt="user"/>
+                                                        <div class="user-data">
+                                                            <span class="name block capitalize-font">Recycling Request</span>
+                                                            <span class="time block truncate txt-grey">text.</span>
+                                                        </div>
+                                                        <div class="status offline"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </a>
+                                                <a href="javascript:void(0)">
+                                                    <div class="chat-data">
+                                                        <img class="user-img img-circle" src="{% static 'dist/img/user2.png'%}"
+                                                             alt="user"/>
+                                                        <div class="user-data">
+                                                            <span class="name block capitalize-font">Cleaning Request</span>
+                                                            <span class="time block truncate txt-grey">text.</span>
+                                                        </div>
+                                                        <div class="status online"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </a>
+                                                <a href="javascript:void(0)">
+                                                    <div class="chat-data">
+                                                        <img class="user-img img-circle" src="{% static 'dist/img/user3.png'%}"
+                                                             alt="user"/>
+                                                        <div class="user-data">
+                                                            <span class="name block capitalize-font">Recycling Request</span>
+                                                            <span class="time block truncate txt-grey">text.</span>
+                                                        </div>
+                                                        <div class="status online"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </a>
+                                                <a href="javascript:void(0)">
+                                                    <div class="chat-data">
+                                                        <img class="user-img img-circle" src="{% static 'dist/img/user.png'%}"
+                                                             alt="user"/>
+                                                        <div class="user-data">
+                                                            <span class="name block capitalize-font">Cleaning Request</span>
+                                                            <span class="time block truncate txt-grey">text.</span>
+                                                        </div>
+                                                        <div class="status offline"></div>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </aside>
+
+                                <aside class="col-lg-9 col-md-8 pl-0">
+                                    <div class="panel panel-refresh pa-0">
+                                        <div class="refresh-container">
+                                            <div class="la-anim-1"></div>
+                                        </div>
+                                        <div class="panel-heading pt-20 pb-20 pl-15 pr-15">
+                                            <div class="pull-left">
+                                                <h6 class="panel-title txt-dark">inbox</h6>
+                                            </div>
+                                            <div class="pull-right">
+                                                <form role="search" class="inbox-search inline-block pull-left mr-15">
+                                                    <div class="input-group">
+                                                        <input name="example-input1-group2" class="form-control"
+                                                               placeholder="Search" type="text">
+                                                        <span class="input-group-btn">
+																	<button type="button" class="btn  btn-default"
+                                                                            data-target="#search_form"
+                                                                            data-toggle="collapse" aria-label="Close"
+                                                                            aria-expanded="true"><i
+                                                                            class="zmdi zmdi-search"></i></button>
+																	</span>
+                                                    </div>
+                                                </form>
+                                                <a href="#" class="pull-left inline-block refresh">
+                                                    <i class="zmdi zmdi-replay"></i>
+                                                </a>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="panel-wrapper collapse in">
+                                            <div class="panel-body inbox-body pa-0">
+                                                <div class="heading-inbox">
+                                                    <div class="container-fluid">
+                                                        <div class="pull-left">
+                                                            <div class="compose-btn">
+                                                                <a class="btn btn-sm mr-10" href="#" data-toggle="modal"
+                                                                   title="Compose"><i
+                                                                        class="zmdi zmdi-chevron-left"></i></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="pull-right text-right">
+                                                            <button class="btn btn-sm mr-10" title="" type="button"><i
+                                                                    class="zmdi zmdi-print"></i></button>
+                                                            <button class="btn btn-sm mr-10" title=""><i
+                                                                    class="zmdi zmdi-delete"></i></button>
+                                                            <div class="inline-block dropdown">
+                                                                <a class="dropdown-toggle" data-toggle="dropdown"
+                                                                   href="#" aria-expanded="false" role="button"><i
+                                                                        class="zmdi zmdi-more"></i></a>
+                                                                <ul class="dropdown-menu bullet dropdown-menu-right"
+                                                                    role="menu">
+                                                                    <li role="presentation"><a href="javascript:void(0)"
+                                                                                               role="menuitem"><i
+                                                                            class="icon wb-reply"
+                                                                            aria-hidden="true"></i>Mark as Unread</a>
+                                                                    </li>
+                                                                    <li role="presentation"><a href="javascript:void(0)"
+                                                                                               role="menuitem"><i
+                                                                            class="icon wb-share"
+                                                                            aria-hidden="true"></i>Mark as Important</a>
+                                                                    </li>
+                                                                    <li role="presentation"><a href="javascript:void(0)"
+                                                                                               role="menuitem"><i
+                                                                            class="icon wb-trash"
+                                                                            aria-hidden="true"></i>Report Spam</a></li>
+                                                                </ul>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <hr class="light-grey-hr mt-10 mb-15"/>
+                                                </div>
+
+
+                                                <div class="col-sm-12">
+
+                                                    <div class="panel-wrapper collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="item-big">
+                                                                        <!-- START carousel-->
+                                                                        <div id="carousel-example-captions-1"
+                                                                             data-ride="carousel"
+                                                                             class="carousel slide">
+                                                                            <ol class="carousel-indicators">
+                                                                                <li data-target="#carousel-example-captions-1"
+                                                                                    data-slide-to="0"
+                                                                                    class="active"></li>
+                                                                                <li data-target="#carousel-example-captions-1"
+                                                                                    data-slide-to="1"></li>
+                                                                            </ol>
+                                                                            <div role="listbox" class="carousel-inner">
+                                                                                <div class="item active"><img
+                                                                                        src="{% static 'dist/img/gallery/mock1.jpg'%}"
+                                                                                        alt="First slide image"></div>
+                                                                                <div class="item"><img
+                                                                                        src="{% static 'dist/img/gallery/mock4.jpg'%}"
+                                                                                        alt="Second slide image"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!-- END carousel-->
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-9">
+                                                                    <div class="product-detail-wrap">
+
+                                                                        <h3 class="mb-20 weight-500">request type</h3>
+                                                                        <div class="product-price head-font mb-30">
+                                                                            1234
+                                                                        </div>
+                                                                        <p class="mb-50">request details .</p>
+
+                                                                        <div class="row">
+                                                                            <div class="col-lg-12">
+                                                                                <hr class="light-grey-hr"/>
+                                                                                <a href="javascript:void(0);"
+                                                                                   data-toggle="collapse"
+                                                                                   data-target="#table_dr">
+                                                                                    <div class="pull-left"><i
+                                                                                            class="zmdi zmdi-accounts-alt mr-20"></i><span
+                                                                                            class="right-nav-text">Workers Team</span>
+                                                                                    </div>
+                                                                                    <div class="pull-right"><i
+                                                                                            class="zmdi zmdi-caret-down"></i>
+                                                                                    </div>
+                                                                                    <div class="clearfix"></div>
+                                                                                </a>
+                                                                                <ul id="table_dr"
+                                                                                    class="collapse collapse-level-1 two-col-list">
+                                                                                    <li>
+                                                                                        Team 1
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        Team 2
+                                                                                    </li>
+
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr class="light-grey-hr"/>
+                                                                        <div class="btn-group wishlist">
+                                                                            <button class="btn btn-warning btn-outline btn-anim">
+                                                                                <i class="fa fa-exclamation-triangle"></i><span
+                                                                                    class="btn-text">reject</span>
+                                                                            </button>
+                                                                        </div>
+
+                                                                        <div class="btn-group mr-10">
+                                                                            <button class="btn btn-primary btn-anim"><i
+                                                                                    class="fa fa-check"></i><span
+                                                                                    class="btn-text">accept</span>
+                                                                            </button>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Row -->
+{% endblock content %}

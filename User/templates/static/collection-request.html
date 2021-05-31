@@ -1,0 +1,325 @@
+{% extends 'html/userBase.html' %}
+{% load static %}
+{% block content %}
+    <!-- Title -->
+    <div class="row heading-bg">
+        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h5 class="txt-dark">Collection Request</h5>
+        </div>
+        <!-- Breadcrumb -->
+        <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
+                <li><a href="#"><span>New Requests</span></a></li>
+                <li class="active"><span>Collection Request</span></li>
+            </ol>
+        </div>
+        <!-- /Breadcrumb -->
+    </div>
+    <!-- /Title -->
+
+    <!-- Row -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default card-view">
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <h6 class="panel-title txt-dark">New Collection Request</h6>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body">
+                        You may Scan the QR code or enter the bin id below it
+                        <h3><span class="number"><i class="pe-7s-trash txt-black"></i></span><span
+                                class="head-font capitalize-font">Scan</span></h3>
+                        <div id="qr-reader" class="col-10 offset-1 container-fluid"></div>
+                        <div id="qr-reader-results" class="col-10 offset-1"></div>
+
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-wrap">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="zmdi zmdi-delete"></i>
+                                                </div>
+                                                <input type="text" class="form-control required" name="binTxt"
+                                                       id="exampleInputuname" placeholder="Enter The Container Code!">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <button class="btn btn-secondary" style="color:black;"
+                                onclick="sendInfo()">
+                            Submit
+                        </button>
+                        <p id="geoLoc"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default card-view">
+                <div class="panel-heading">
+                    <div class="pull-left">
+                        <h6 class="panel-title txt-dark">Current Location</h6>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-wrapper collapse in">
+                    <div class="panel-body">
+                        <div id="mapid" style="height:900px; width: inherit;"></div>
+                    </div>
+                </div>
+
+                <div id="info" class="col-6" style="display: inline; margin-right: 100%">
+                    <br>
+                    <div style="margin-left: 0.7%">
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        var currentMarker = null;
+        let geoPTag = document.getElementById("geoLoc");
+
+        const currentIcon = L.icon({
+            iconUrl: '../../static/imgs/containers/currentLocation.png',
+            iconSize: [26, 26],
+            iconAnchor: [20, 20],
+        })
+
+        const HERE_GEOCODER_API = 'mNGUAVaZ0-6LKYHPj3Wd3S0fkiKdkUw9j5U0hmLODEA'
+
+        let lat = -1, lng = -1;
+        var map = null;
+
+        async function sendInfo() {
+            m_postcode = await getZipBylatlng(lat, lng)
+            await sendJsonByAjax(
+                {
+                    code: document.getElementById('exampleInputuname').value,
+                    lat: lat,
+                    lng: lng,
+                    postcode: m_postcode
+                }, 'setScanned')
+        }
+
+        async function sendInfoQr(qrcode) {
+            m_postcode = await getZipBylatlng(lat, lng)
+            await sendJsonByAjax(
+                {
+                    code: qrcode,
+                    lat: lat,
+                    lng: lng,
+                    postcode: m_postcode
+                }, 'setScanned')
+        }
+
+        function timeout(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        window.onload = async function () {
+            getGeoLoc();
+        };
+
+
+        //function that returns the current geo location
+        function getGeoLoc() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                geoPTag.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        async function showPosition(position) {
+            lat = position.coords.latitude;
+            lng = position.coords.longitude;
+
+            map = L.map('mapid', {
+                center: [lat, lng],
+                zoom: 16
+            });
+
+            let latlngsAmana = [[25.39005979913065, 49.55752265454977], [25.38815520107513, 49.55743145944325], [25.388207541442778, 49.561765909538735], [25.390854584270226, 49.56053316601356]]
+            let amanaExit = [[25.3900481377995, 49.56115812063217], [25.39001421392065, 49.5610722899437], [25.389747668826697, 49.56115812063217], [25.389762207665182, 49.561292231082916]]
+            let amanaEnter = [[25.39069753577986, 49.559243023395545], [25.3906393811618, 49.55929130315781], [25.390668458326445, 49.55944150686265], [25.390745998186674, 49.55944150686265]]
+
+            L.polygon(latlngsAmana, {color: 'teal'}).addTo(map);
+            L.polyline(amanaExit, {color: 'red'}).addTo(map);
+            L.polyline(amanaEnter, {color: 'green'}).addTo(map);
+
+            atttribuation = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/"';
+            tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            var tiles = L.tileLayer(tileUrl, {atttribuation})
+            tiles.addTo(map)
+            geoPTag.innerHTML = "Latitude: " + position.coords.latitude +
+                "<br>Longitude: " + position.coords.longitude;
+
+            map.on('mousemove', function (e) {
+                point = {lat: e.latlng.lat, lng: e.latlng.lng}
+                document.getElementById("info").innerHTML = "Latitude: " + point.lat + "<br><div style=\"margin-left: 0.7%\">" + "Longitude: " + point.lng + "</div>";
+            });
+
+            map.on('click', function (e) {
+                point = {lat: e.latlng.lat, lng: e.latlng.lng}
+                lat = point.lat;
+                lng = point.lng;
+
+                geoPTag.innerHTML = "Latitude: " + lat +
+                "<br>Longitude: " + lng;
+                addCurrentLocation(point)
+            });
+
+            L.Map.include({
+                getMarkerById: function (id) {
+                    var marker = null;
+                    this.eachLayer(function (layer) {
+                        if (layer instanceof L.Marker) {
+                            if (layer.options.id === id) {
+                                marker = layer;
+                            }
+                        }
+                    });
+                    return marker;
+                }
+            });
+
+
+            currentMarker = L.marker([lat, lng], {
+                icon: currentIcon,
+                id: "current"
+            })
+
+            map.addLayer(currentMarker)
+        }
+
+        async function getZipBylatlng(lat, lng) { //return int zip_code by using lat,lng\
+            let url = "https://discover.search.hereapi.com/v1/discover?at=" +
+                lat +
+                "," + lng + "&q=" + lat +
+                "," + lng +
+                "&apiKey=" + HERE_GEOCODER_API;
+
+            let zip_code = await retrieveAPIJson(url).then(async (value) => {
+                    try {
+                        return value.items.pop().address.postalCode
+                    } catch (e) {
+                        return 404
+                    }
+                }
+            )
+            return parseInt(zip_code);
+        }
+
+        async function retrieveAPIJson(APIEndPoint) {
+            const response = await fetch(APIEndPoint);
+            const data = await response.json();
+            return data;
+        }
+
+        async function sendJsonByAjax(jsonObj, functionName) {
+            var serializedData = JSON.stringify(jsonObj);
+            $j.ajax({
+                type: "POST",
+                url: "ajax/post/" + functionName + "/",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    serializedData
+                },
+                success: function (data) {
+                    timeout(50)
+                    window.location.replace("../");
+                },
+                error: function (error) {
+                    timeout(50)
+                    //window.location.replace("../");
+                    sendInfo() // try send info again
+                    console.log(error)
+                }
+            });
+        }
+
+        PERMISSION_DENIED = 0
+        navigator.getUserMedia(
+            // constraints
+            {
+                video: true,
+                audio: true
+            },
+
+            // successCallback
+            function (localMediaStream) {
+                var video = document.querySelector('video');
+                video.src = window.URL.createObjectURL(localMediaStream);
+                video.onloadedmetadata = function (e) {
+                    // Do something with the video here.
+                };
+            },
+
+            // errorCallback
+            function (err) {
+                if (err === PERMISSION_DENIED) {
+                    // Explain why you need permission and how to update the permission setting
+                }
+            }
+        );
+        var resultContainer = document.getElementById('qr-reader-results');
+        var lastResult, countResults = 0;
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", {fps: 10, qrbox: 250});
+        html5QrcodeScanner.render(sendInfoQr);
+
+
+        //------------------MAP-------------
+
+        let icon = {
+            iconUrl: '../../static/imgs/containers/currentLocation.png',
+            iconSize: [26, 26],
+            iconAnchor: [20, 20],
+        }
+
+
+        function addCurrentLocation(current) {
+            try {
+                map.removeLayer(currentMarker)
+            } catch (e) {
+                console.log('----')
+                console.log(e)
+                console.log('----')
+            }
+
+            //creat mark layer
+            var marker = L.marker([current.lat, current.lng], {
+                icon: currentIcon,
+                id: "current"
+            })
+            currentMarker = marker
+            //add mark to the map
+            map.addLayer(marker)
+        }
+
+
+        //Retrieves information of a point on the map
+
+
+        //..................................
+    </script>
+
+
+{% endblock content %}

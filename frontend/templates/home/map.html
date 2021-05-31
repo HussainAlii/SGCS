@@ -1,0 +1,833 @@
+{% extends 'html/prototypeBase.html' %}
+
+{% block content %}
+
+    <div class="container p-3 my-3 border" style="background: white">
+        <div class="row">
+            <div style="margin-top: 3px; text-align: center; margin-left: 45%;"><h1>Map</h1>
+                <div class="" id="animate" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-6">
+
+        <div class="row">
+            {# Map div#}
+            <div class="col-md-12">
+                <div class="d-flex align-items-center justify-content-center">
+                    <!-- Map Container -->
+                    <div id="mapid"></div>
+                    {# End of Map div#}
+                </div>
+                <div class="row ml-1">
+                    <div id="info" class="col-6" style="display: inline">Latitude: 25.389536871253537<br>Longitude:
+                        49.5603236751334
+                    </div>
+
+                    <div id="instruct" class="col-6" style="display:inline"></div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" onclick="backRoute()" id="buttonBack" style="visibility: hidden"
+                        class="btn btn-outline-danger"><- Back
+                </button>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" id="buttonRoute" class="btn btn-outline-success">Get Shortest path</button>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" onclick="nextRoute()" id="buttonNext" style="visibility: hidden"
+                        class="btn btn-outline-warning">Next ->
+                </button>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+                <input checked type="checkbox" class="form-check-input" id="sound">
+                <label class="form-check-label" id="soundLabel" for="exampleCheck1">Sound</label>
+            </div>
+        </div>
+
+        <div class="row" id="trip_row" style="display: none">
+            <div class="container col-11 pt-3 pb-3 border" style="background: white">
+                <div style="display: inline">
+                    <h5 style="text-align: center">Trip Summary:</h5>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12" id="trip_summary">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="container pt-3 pb-3 border" style="background: white">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" id="HUFOF" class="btn btn-outline-primary">Go to Amana of Alhasa</button>
+            </div>
+
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" id="buttonContainer" class="btn btn-outline-primary">Add/Edit containers</button>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" onclick="removeAllMarkers()" id="removeAllContainer" style="visibility: hidden"
+                        class="btn btn-outline-danger">Remove All
+                </button>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <button type="button" onclick="removeMark()" id="undoContainer" style="visibility: hidden"
+                        class="btn btn-outline-warning">Undo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container p-3 my-3 border">
+        <div style="font-weight: bold;"><p>Map Info:</p></div>
+        <table class=" table table-bordered table-hover ">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Post Code</th>
+                <th scope="col">Scanned container(s)</th>
+                <th scope="col">Total container(s)</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for i in contList %}
+                <tr>
+                    <th scope="row">
+                        {{ forloop.counter }}
+                    </th>
+                    <td>{{ i.post_code }}</td>
+                    <td>
+                        {% for key, value in scnd.items %}
+                            {% if key == i.post_code %}
+                                {{ value }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ i.contCount }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let isLoading = false
+        const HERE_GEOCODER_API = 'mNGUAVaZ0-6LKYHPj3Wd3S0fkiKdkUw9j5U0hmLODEA'
+        //setup and load icons into array
+        const colors = ['orange', 'yellow']//, 'gray', 'red', 'purple', 'green', 'blue']
+        let icons = []
+        for (let i = 0; i < 2; ++i) {
+            icons[i] = {
+                iconUrl: '../static/imgs/containers/container_' + colors[i] + '.png',
+                iconSize: [26, 26],
+                iconAnchor: [20, 20],
+            }
+        }
+
+        //creating the map
+        var map = L.map('mapid', {
+            center: [25.389536871253537, 49.5603236751334],
+            zoom: 16
+        });
+
+        //include function to get marker
+        L.Map.include({
+            getMarkerById: function (id) {
+                var marker = null;
+                this.eachLayer(function (layer) {
+                    if (layer instanceof L.Marker) {
+                        if (layer.options.id === id) {
+                            marker = layer;
+                        }
+                    }
+                });
+                return marker;
+            }
+        });
+
+        // draw polygon in Amana
+        let latlngsAmana = [[25.39005979913065, 49.55752265454977], [25.38815520107513, 49.55743145944325], [25.388207541442778, 49.561765909538735], [25.390854584270226, 49.56053316601356]]
+        let amanaExit = [[25.3900481377995, 49.56115812063217], [25.39001421392065, 49.5610722899437], [25.389747668826697, 49.56115812063217], [25.389762207665182, 49.561292231082916]]
+        let amanaEnter = [[25.39069753577986, 49.559243023395545], [25.3906393811618, 49.55929130315781], [25.390668458326445, 49.55944150686265], [25.390745998186674, 49.55944150686265]]
+
+        L.polygon(latlngsAmana, {color: 'teal'}).addTo(map);
+        L.polyline(amanaExit, {color: 'red'}).addTo(map);
+        L.polyline(amanaEnter, {color: 'green'}).addTo(map);
+
+        //creating tile
+        atttribuation = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/"';
+        tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var tiles = L.tileLayer(tileUrl, {atttribuation})
+        tiles.addTo(map)
+
+        //add container button
+        var activeContainer = false;
+        var containerButton = document.getElementById("buttonContainer")
+        var undoButton = document.getElementById("undoContainer")
+        var removeAllButton = document.getElementById("removeAllContainer")
+        var pointsArr = []
+
+        containerButton.onclick = function () {
+            if (activeContainer == true) {
+                activeContainer = !activeContainer;
+                containerButton.className = "btn btn-outline-primary"
+                containerButton.innerText = "Add/Edit containers"
+                undoButton.style = "visibility: hidden"
+                removeAllButton.style = "visibility: hidden"
+            } else {
+                activeContainer = !activeContainer;
+                containerButton.className = "btn btn-outline-info"
+                containerButton.innerText = "Cancel"
+                undoButton.style = ""
+                removeAllButton.style = ""
+            }
+        }
+
+        //Get event click from the map to add mark
+        map.on('click', function (e) {
+            create_container(e)
+        });
+
+        function timeout(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function getZipBylatlng(lat, lng) { //return int zip_code by using lat,lng\
+            let url = "https://discover.search.hereapi.com/v1/discover?at=" +
+                lat +
+                "," + lng + "&q=" + lat +
+                "," + lng +
+                "&apiKey=" + HERE_GEOCODER_API;
+
+            let zip_code = await retrieveAPIJson(url).then(async (value) => {
+                    try {
+                        return value.items.pop().address.postalCode
+                    } catch (e) {
+                        return 404
+                    }
+                }
+            )
+            return parseInt(zip_code);
+        }
+
+        //send data to db
+        async function sendJsonByAjax(jsonObj, functionName) {
+            var serializedData = JSON.stringify(jsonObj);
+            $.ajax({
+                type: "POST",
+                url: "ajax/post/" + functionName + "/",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    serializedData
+                },
+                success: function (data) {
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        //really send and return data
+        async function sendRetJsonByAjaxReally(jsonObj, functionName) {
+            var serializedData = JSON.stringify(jsonObj);
+           var data = await $.ajax({
+                type: "POST",
+                url: "ajax/post/" + functionName + "/",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    serializedData
+                },
+                success: function (data) {
+                    return data
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            return data
+        }
+
+        //send and return data
+        async function sendRetJsonByAjax(id, functionName) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/post/" + functionName + "/",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    id
+                },
+                success: function (data) {
+                    //data = data.slice(137) //optional
+                    document.getElementById("QrImg").innerHTML = data
+                    //console.log(data)
+                    return data
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        //send request to db
+        async function sendRequestByAjax(functionName) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/request/" + functionName + "/",
+                data: {csrfmiddlewaretoken: "{{ csrf_token }}"},
+                success: function (data) {
+                    //console.log(data)
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        async function getQrCode(id) {
+            await sendRetJsonByAjax(id, "getQrCode")
+        }
+
+        //retrieve data from db
+        async function fetchByAjax(functionName) {
+            let returned_data = await
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/fetch/" + functionName + "/",
+                    data: {csrfmiddlewaretoken: "{{ csrf_token }}"},
+                    success: function (data) {
+                        return data
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            return returned_data;
+        }
+
+        async function loadingAnimation() {
+            if (isLoading) {
+                isLoading = !isLoading
+                document.getElementById("animate").className = ''
+                activeContainer = !activeContainer
+                document.getElementById("buttonContainer").disabled = false
+                document.getElementById("undoContainer").disabled = false
+
+                document.getElementById("buttonRoute").disabled = false
+                document.getElementById("buttonNext").disabled = false
+                document.getElementById("buttonBack").disabled = false
+
+            } else {
+                isLoading = !isLoading
+                document.getElementById("animate").className = 'spinner-border';
+                activeContainer = !activeContainer
+                document.getElementById("buttonContainer").disabled = true
+                document.getElementById("undoContainer").disabled = true
+
+                document.getElementById("buttonRoute").disabled = true
+                document.getElementById("buttonNext").disabled = true
+                document.getElementById("buttonBack").disabled = true
+            }
+        }
+
+        async function generate_container_id() {
+            return fetchByAjax("get_last_container_id")
+        }
+
+        async function create_container(e) { //save container data to database
+            if (activeContainer) {
+                //get zip code of the container
+                loadingAnimation()
+                let id = parseInt(await generate_container_id()) + 1
+                let zipCode = await getZipBylatlng(e.latlng.lat, e.latlng.lng)
+                //create object container
+                let container = {
+                    lat: e.latlng.lat,
+                    lng: e.latlng.lng,
+                    zip_code: zipCode,
+                    cust_id: id
+                }
+                await sendJsonByAjax(container, "getContainer")
+
+                loadingAnimation()
+                await addMark(container, id); // create container and mark it in the map
+            }
+        }
+
+        async function addMark(container, cust_id) {
+            //select random number color between available colors
+            const color = Math.floor(Math.random() * 2)
+            //select icon from random color
+            const iconContainer = L.icon(icons[color]);
+            //creat mark layer
+            var marker = L.marker([container.lat, container.lng], {
+                icon: iconContainer,
+                id: cust_id
+            })
+
+            marker.bindPopup('<h5>' + 'ID: ' + cust_id + '</h5>' + '<h5>' + 'Lat: ' + container.lat + '</h5>' + '<h5>' + 'Lng: '
+                + container.lng + '</h5>' + '<svg alt="Click me" role="img" id="QrImg" onclick="getQrCode(' + cust_id + ')"><text x="80" y="60" class="heavy">Click to show QR code</text></svg>' + "<button onclick = scanContainer(" + cust_id + ") class=" + "\"btn btn-outline-primary\"" + ">Scan Container</button>" +
+                "<button  onclick = removeContainer(" + cust_id + ") class=" + "\"btn btn-outline-danger\"" + ">Remove Container</button>");
+
+            //add mark to the map
+            map.addLayer(marker)
+            //add mark to array
+            pointsArr.push(marker)
+        }
+
+        function addTruck(truck) {
+            const truckIcon = L.icon({
+                iconUrl: '../static/imgs/truck.png',
+                iconSize: [32, 32],
+                iconAnchor: [26, 26],
+            })
+            //creat mark layer
+            var marker = L.marker([truck.lat, truck.lng], {
+                icon: truckIcon,
+                id: "truck"
+            })
+            //add mark to the map
+            map.addLayer(marker)
+            //add mark to array
+            truckMarker = marker
+        }
+
+        function removeMark() {
+            if (pointsArr.length >= 1) {
+                map.removeLayer(pointsArr.pop())
+                sendRequestByAjax("removeLastContainer")
+            }
+        }
+
+        function removeAllMarkers() {
+            if (pointsArr.length >= 1) {
+                pointsArr.forEach(function (marker) {
+                    map.removeLayer(marker)
+                })
+                sendRequestByAjax("removeAllContainers")
+            }
+        }
+
+        // Goes to Hufof
+        var hufofButton = document.getElementById("HUFOF")
+
+        hufofButton.onclick = function () {
+            map.setView([25.389536871253537, 49.5603236751334], 16)
+        }
+
+        //Retrieves information of a point on the map
+        map.on('mousemove', function (e) {
+            point = {lat: e.latlng.lat, lng: e.latlng.lng}
+            document.getElementById("info").innerHTML = "Latitude: " + point.lat + "<br>" + " Longitude: " + point.lng + "<br>";
+        });
+
+        async function retrieveAPIJson(APIEndPoint) {
+            const response = await fetch(APIEndPoint);
+            const data = await response.json();
+            return data;
+        }
+
+        function loadContainers() {
+            var jsonArray = {{ containers|safe}}; //fetch to json
+            var len = jsonArray.length;
+
+            if (len != 0) {
+                while (len--) { //go to each json object
+                    let jsoncontainer = jsonArray.pop()
+                    let container = {
+                        lat: jsoncontainer.fields.lat,
+                        lng: jsoncontainer.fields.lng,
+                        cust_id: jsoncontainer.pk
+                    }
+                    addMark(container, container.cust_id)
+                }
+            }
+
+            color_request_containers()
+        }
+
+        function color_request_containers() {
+            var jsonArray = {{ scaned_container|safe}}; //fetch to json
+            var len = jsonArray.length;
+
+            const iconContainer = L.icon({
+                iconUrl: '../static/imgs/containers/container_red.png',
+                iconSize: [26, 26],
+                iconAnchor: [20, 20]
+            });
+
+            if (len != 0) {
+                while (len--) { //go to each json object
+                    let jsoncontainer = jsonArray.pop()
+                    let marker = map.getMarkerById(jsoncontainer.fields.cont_id)
+                    marker.setIcon(iconContainer);
+                }
+            }
+        }
+
+        function scanContainer(cust_id) {
+            const iconContainer = L.icon({
+                iconUrl: '../static/imgs/containers/container_red.png',
+                iconSize: [26, 26],
+                iconAnchor: [20, 20]
+            });
+
+            let marker = map.getMarkerById(cust_id)
+            marker.setIcon(iconContainer);
+            console.log(marker)
+            let obj = {
+                id: cust_id,
+                status: 'Processing',
+            }
+            sendJsonByAjax(obj, 'requestScanCont');
+        }
+
+         function collectContainer(cust_id) {
+             const iconContainer = L.icon({
+                iconUrl: '../static/imgs/containers/container_yellow.png',
+                iconSize: [26, 26],
+                iconAnchor: [20, 20]
+            });
+
+            let marker = map.getMarkerById(parseInt(cust_id))
+            marker.setIcon(iconContainer);
+        }
+
+        function removeContainer(cust_id) {
+            let obj = {
+                id: cust_id
+            }
+            sendJsonByAjax(obj, 'remove_container');
+            map.removeLayer(map.getMarkerById(cust_id))
+        }
+
+
+        //main
+        window.onload = (event) => {
+            //retrieveAPIJson(districtAPI);
+            //retrieveAPIJson(addressAPI);
+            loadContainers();
+        };
+
+        //add container button
+        var activeRoute = false;
+        var routeButton = document.getElementById("buttonRoute")
+        var nextButton = document.getElementById("buttonNext")
+        var backButton = document.getElementById("buttonBack")
+        var tripSummary = document.getElementById("trip_row")
+        var instructionDev = document.getElementById("instruct")
+        var sound = document.getElementById("sound")
+        var soundLabel = document.getElementById("soundLabel")
+
+        sound.style = "visibility: hidden"
+        soundLabel.style = "visibility: hidden"
+
+        routeButton.onclick = function () {
+            route()
+        }
+
+        function route() {
+            if (activeRoute == true) {
+                activeContainer = false;
+                activeRoute = !activeRoute;
+                routeButton.className = "btn btn-outline-success"
+                routeButton.innerText = "Get Shortest path"
+                nextButton.style = "visibility: hidden"
+                backButton.style = "visibility: hidden"
+                tripSummary.style = "display: none"
+                instructionDev.innerHTML = ""
+                sound.style = "visibility: hidden"
+                soundLabel.style = "visibility: hidden"
+
+                containerButton.style = ""
+                containerButton.className = "btn btn-outline-primary"
+                containerButton.innerHTML = "Add/Edit containers"
+                undoButton.style = "visibility: hidden"
+                removeAllButton.style = "visibility: hidden"
+                try {
+                    clearAllMap()
+                } catch (e) {
+                }
+            } else {
+                activeContainer = false;
+                activeRoute = !activeRoute;
+                routeButton.className = "btn btn-outline-info"
+                routeButton.innerText = "Exit Route"
+                nextButton.style = ""
+                backButton.style = ""
+                tripSummary.style = ""
+                instructionDev.innerHTML = ""
+                sound.style = ""
+                soundLabel.style = ""
+
+                containerButton.style = "visibility: hidden"
+                undoButton.style = "visibility: hidden"
+                removeAllButton.style = "visibility: hidden"
+
+                getRouteF()
+            }
+        }
+
+        async function getRouteF() {
+            var scaned_containers_coords = await fetchByAjax("getContCoordz")
+            var url = "http://router.project-osrm.org/trip/v1/driving/" +
+                //origin=
+                "49.56138610839840,25.389902749680240;" +
+                scaned_containers_coords +
+                //last =
+                "49.559275209903724,25.390779922007738" +
+                "?roundtrip=false&source=first&destination=last&steps=true&geometries=polyline6&overview=full&annotations=false"
+          console.log(url)
+            loadingAnimation()
+            await DrawAllMap(url)
+        }
+
+        var sectionLength, initialLength
+        var mapLayers, summaryArr = []
+        var trip_summary = document.getElementById("trip_summary")
+        var truckMarker = null
+
+        async function DrawAllMap(APIEndPoint) {
+            sectionLength = 0, initialLength = 0
+            mapLayers = []
+            trip_summary.innerHTML = ""
+            const response = await fetch(APIEndPoint);
+            const data = await response.json();
+            var legs_ = data.trips.pop()
+            //total summary
+            trip_summary.innerHTML += "<h5>Summary:" +
+                "</h5><div style='margin-left: 20px; width: 400px'><p>Total Distance: " + parseInt(legs_.distance) / 1000 +
+                "km</p></div><div style='margin-left: 20px; width: 400px'><p>Total Duration: " + Math.ceil(parseInt(legs_.duration) / 60) + "min(" + legs_.duration + "s)" +
+                "</p></div>"
+            legs_ = legs_.legs
+            var tripCount = 1;
+            while (legs_.length) {
+                var section = legs_.pop();
+                //get trips summary
+                trip_summary.innerHTML += "<h5>Stop " + tripCount +
+                    ":</h5><div style='margin-left: 20px; width: 400px'><p>Distance: " + parseInt(section.distance) / 1000 +
+                    "km</p></div><div style='margin-left: 20px; width: 400px'><p>Duration: " + Math.round(parseInt(section.duration) / 60) + "min(" + section.duration + "s)" +
+                    "</p></div><div style='margin-left: 20px; width: 400px'><p>Street Name: " + section.summary + "</p></div>"
+
+                tripCount++;
+                section = section.steps;
+                while (section.length) {
+                    var step = section.pop()
+                    let geo = polyline.toGeoJSON(step.geometry, 6)
+                    let instructions = getInstructions(step.maneuver.type, step.maneuver.modifier, step.distance)
+
+                    mapLayers.push({
+                        geo: L.geoJSON(geo).addTo(map),
+                        instruction: instructions,
+                        streetName: step.name,
+                        duration: step.duration,
+                        truck: geo.coordinates[0]
+                    })
+                }
+            }
+            sectionLength = mapLayers.length
+            initialLength = mapLayers.length
+
+            await loadingAnimation()
+        }
+
+        function clearAllMap() {
+            var lengthArray = mapLayers.length
+            while (lengthArray) {
+                map.removeLayer(mapLayers[lengthArray - 1].geo)
+                lengthArray--
+            }
+            //remove truck if exist
+            try {
+                map.removeLayer(map.getMarkerById("truck"))
+            } catch (e) {
+            }
+        }
+
+        function drawMapWithGeo() {
+            var lengthArray = initialLength
+            while (lengthArray) {
+                mapLayers[lengthArray - 1].geo.addTo(map)
+                lengthArray--
+
+            }
+        }
+
+        function clearPrevious() {
+            if (sectionLength + 1 >= 0 && sectionLength + 1 < initialLength) {
+                map.removeLayer(mapLayers[sectionLength + 1].geo)
+                try {
+                    map.removeLayer(mapLayers[sectionLength + 2].geo)
+                } catch (e) {
+                }
+            }
+        }
+
+        function clearForwawrd() {
+            if (sectionLength == initialLength) {
+                drawMapWithGeo()
+            }
+            if (sectionLength < initialLength) {
+                map.removeLayer(mapLayers[sectionLength - 1].geo)
+                try {
+                    map.removeLayer(mapLayers[sectionLength - 2].geo)
+                } catch (e) {
+                }
+            }
+        }
+
+        async function nextRoute() {
+            var layer = mapLayers[sectionLength - 1];
+            if (nextButton.innerHTML === "Finish Stop!") {
+                try {
+                    var containerId = await sendRetJsonByAjaxReally({
+                        lat: layer.truck[1],
+                        lng: layer.truck[0],
+                    }, "collectContainer");
+                    await collectContainer(containerId)
+                } catch (e) {
+                }
+                nextButton.innerHTML = "next->";
+                mapLayers = mapLayers.slice(0, sectionLength + 1);
+                initialLength = mapLayers.length
+            }
+            //remove truck if exist
+            try {
+                map.removeLayer(map.getMarkerById("truck"))
+            } catch (e) {
+            }
+
+            if (initialLength == sectionLength) { //clear all map if all map have been drawn
+                clearAllMap()
+            }
+
+            if (sectionLength) { //if sections length not zero show other legs
+                layer.geo.addTo(map) //draw next route
+
+                if (layer.instruction === "You have Arrived to your current destination") {
+                    nextButton.innerHTML = "Finish Stop!"
+                }
+
+                instructionDev.innerHTML = layer.instruction
+
+                try {
+                    var layerFront = mapLayers[sectionLength - 2]
+                    instructionDev.innerHTML += " then " + layerFront.instruction
+                    layerFront.geo.addTo(map) //draw next route
+                } catch (e) {
+                }
+
+                instructionDev.innerHTML += "<br>" + layer.streetName
+                speechSynthesis.cancel()
+                if (sound.checked) {
+                    talk(instructionDev.innerText)
+                }
+                addTruck({
+                    lat: layer.truck[1],
+                    lng: layer.truck[0],
+                })
+                sectionLength--
+                clearPrevious()
+            } else {
+                route()
+                clearAllMap()
+            }
+        }
+
+
+        async function backRoute() {
+            //remove truck if exist
+            try {
+                map.removeLayer(map.getMarkerById("truck"))
+            } catch (e) {
+            }
+            if (sectionLength + 1 == initialLength) { //if sections length not zero show other legs
+                route()
+                clearAllMap()
+
+            } else {
+                var layer = mapLayers[sectionLength + 1]
+                layer.geo.addTo(map) //draw next route
+                instructionDev.innerHTML = layer.instruction
+
+                try {
+                    var layerFront = mapLayers[sectionLength + 2]
+                    layerFront.geo.addTo(map) //draw next route
+                } catch (e) {
+                }
+
+                instructionDev.innerHTML += "<br>" + layer.streetName
+                speechSynthesis.cancel()
+                if (sound.checked) {
+                    talk(instructionDev.innerText)
+                }
+                addTruck({
+                    lat: layer.truck[1],
+                    lng: layer.truck[0],
+                })
+                sectionLength++
+                clearForwawrd()
+            }
+        }
+
+        function getInstructions(type, modifier, distance) {
+            var action = ""
+            if (modifier == null)
+                modifier = ""
+
+            switch (type) {
+                case "turn":
+                case "fork":
+                    action = "After " + parseInt(distance) + "meters " + type + " " + modifier;
+                    break;
+
+                case "arrive":
+                    action = "You have Arrived to your current destination"
+                    break;
+
+                case "depart":
+                    action = "Start your Next Destination"
+                    break;
+
+                case "off ramp":
+                    action = "Take a " + modifier + " ramp to exit a highway after " + parseInt(distance) + "meters"
+                    break;
+                case "on ramp":
+                    action = "Take a " + modifier + " ramp to enter a highway after " + parseInt(distance) + "meters"
+                    break;
+
+
+                case "new name":
+                    action = "Continue " + modifier + " for about " + parseInt(distance) + "meters"
+                    break;
+
+                default:
+                    action = capitalizeFirstLetter(type) + " " + modifier;
+            }
+            return action
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function talk(text) {
+            speechSynthesis.cancel()
+            var msg = new SpeechSynthesisUtterance();
+            var voices = window.speechSynthesis.getVoices();
+            msg.voice = voices[3];
+            msg.text = text;
+            speechSynthesis.speak(msg);
+        }
+
+    </script>
+{% endblock content %}

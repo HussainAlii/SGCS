@@ -15,7 +15,7 @@ The project focuses on city management and try to make cities smarter by advanci
 - Django-sslserver
 - Python
 - JS
-- leaflet API
+- Leaflet API
 - OSRM API
 - Here API
 - Object-Relational Mapping.

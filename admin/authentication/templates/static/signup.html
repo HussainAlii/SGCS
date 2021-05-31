@@ -1,0 +1,80 @@
+{% extends 'html/AuthBase.html' %}
+{% block content %}
+    {% load static %}
+    <header class="sp-header">
+        <div class="sp-logo-wrap pull-left">
+            <a href="{% url 'signup' %}">
+                <img class="brand-img mr-10" src="{% static 'dist/img/logo.png'%}" alt="brand"/>
+                <span class="brand-text">SGCS</span>
+            </a>
+        </div>
+        <div class="form-group mb-0 pull-right">
+            <span class="inline-block pr-10">Already have an account?</span>
+            <a class="inline-block btn btn-primary btn-rounded btn-outline" href="{% url 'signin' %}">Sign In</a>
+        </div>
+        <div class="clearfix"></div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="page-wrapper pa-0 ma-0 auth-page">
+        <div class="container-fluid">
+            <!-- Row -->
+            <div class="table-struct full-width full-height">
+                <div class="table-cell vertical-align-middle auth-form-wrap">
+                    <div class="auth-form  ml-auto mr-auto no-float">
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12">
+                                <div class="mb-30">
+                                    <h3 class="text-center txt-dark mb-10">Sign up to SGCS</h3>
+                                    <h6 class="text-center nonecase-font txt-grey">Enter your details below</h6>
+                                </div>
+                                <div class="form-wrap">
+                                    <form action="../signup/" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label class="control-label mb-10" for="national_number">National Number</label>
+                                            <input type="text" class="form-control" required="" id="national_number"
+                                                   name="national_number" placeholder="Please Enter you National ID">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="pull-left control-label mb-10" for="password">Password</label>
+                                            <input type="password" class="form-control" required="" id="password"
+                                                   name="password" placeholder="Please Enter Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="pull-left control-label mb-10" for="ConPassword">Confirm
+                                                Password</label>
+                                            <input type="password" class="form-control" required="" id="ConPassword"
+                                                   name="ConPassword" placeholder="Please Re-Enter Password">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="checkbox checkbox-primary pr-10 pull-left">
+                                                <input id="checkbox_2" required="" type="checkbox">
+                                                <label for="checkbox_2" style="color: whitesmoke"> I agree to all <span
+                                                        class="txt-primary">Terms</span></label>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <button type="submit" name="submit" class="btn btn-primary btn-rounded">sign Up</button>
+                                        </div>
+                                    </form>
+                                    <div>
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{ message.tags }}" id="dangerAlert" role="alert">
+                                                <h6> {{ message }}</h6>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Row -->
+        </div>
+
+    </div>
+    <!-- /Main Content -->
+{% endblock content %}

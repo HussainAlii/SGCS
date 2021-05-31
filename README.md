@@ -25,3 +25,9 @@ The project focuses on city management and try to make cities smarter by advanci
 - Users can send a request and data get collecte data.
 - Command centers generate maps and view analysis.
 - Worker get generated map and follow each point on the map to collect waste.
+
+# Images
+![image](https://user-images.githubusercontent.com/58237246/120243393-20f53a80-c270-11eb-9127-cb975bde5c01.png)
+![image](https://user-images.githubusercontent.com/58237246/120243404-2b173900-c270-11eb-8011-4a29e02df0e6.png)
+![image](https://user-images.githubusercontent.com/58237246/120243409-2eaac000-c270-11eb-8818-4bbb73a2543c.png)
+

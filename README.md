@@ -8,7 +8,7 @@ The project focuses on city management and try to make cities smarter by advanci
 * Improve waste collection process.
 * Scan a container using Generated QR code
 * Provide an estimation of the shortest path between Scaned containers.
-* Analytics
+* Provide Analytical data
 
 # Technology used
 - Django-framework
